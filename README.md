@@ -1,5 +1,5 @@
 # book-management-sys
-## This is SQL that does book management system with an interactive menu
+## This is a Python interactive menu for Book Management. 
 
 #### •	The system shall allow user to add a new publisher (name, phone and city).
 #### •	The system shall allow user to add a new book (ISBN, title, year, published_by, previous edition and price).
