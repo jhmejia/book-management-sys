@@ -10,7 +10,7 @@ import sys
 import book_dao
 
 
-#This python program uses colors. If you don't want colors/ doesnt work when you're testing, set this to false
+#This python program uses colors! If you don't want colors/ doesn't work when you're testing, set this to False
 useColors = True
 
 
@@ -154,7 +154,11 @@ def search_by_title_and_publisher():
 #===============================================================================
 def print_menu():
     print()
-    print(f"{bcolors.HEADER}Please Make a Selection{bcolors.ENDC}")
+    print("--------------------------------------------Book Manager Software-------------------------------------------\n")
+    if useColors:
+        print(f"{bcolors.HEADER}Please Make a Selection{bcolors.ENDC}")
+    else:
+        print("Please Make a Selection")
     for key in menu_options.keys():
         print (str(key)+'.', menu_options[key], end = "  ")
     print()
@@ -215,7 +219,10 @@ def option2():
     publisher = input('Enter the publisher\'s name: ')
     book_dao.checkPublisher(publisher)
     if book_dao.checkPublisher(publisher) == False:
-        print(f"{bcolors.WARNING}Publisher not found. Please add a valid publisher or add yours with \'Add a Publisher\'{bcolors.ENDC}")
+        if useColors:
+            print(f"{bcolors.WARNING}Publisher not found. Please add a valid publisher or add yours with \'Add a Publisher\'{bcolors.ENDC}")
+        else:
+            print('Publisher not found. Please add a valid publisher or add yours with \'Add a Publisher\'')
         return
     try:
         year = int(input('Enter the year: '))

@@ -1,3 +1,10 @@
+#================================================================================================
+# bookdao.py
+# John Henry Mejia
+# Controller for the book manager, handles all the SQL logic for the book manager
+#================================================================================================
+
+
 from mysql_connector import connection
 
 # This function finds all the books in the database
