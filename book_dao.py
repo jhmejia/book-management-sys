@@ -1,139 +1,61 @@
-#================================================================================================
-# bookdao.py
-# John Henry Mejia
-# Controller for the book manager, handles all the SQL logic for the book manager
-#================================================================================================
+from pymongo_connector import coll
+from pymongo_connector import pub
 
+collection = coll
 
-from mysql_connector import connection
-
-# This function finds all the books in the database
 def findAll():
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book"
-    cursor.execute(query)
-    results = cursor.fetchall()
-    #connection.close()
+    results = collection.find({})
     return results
 
-# This function checks if a publisher exists in the database
-def checkPublisher(publisher):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Publisher where name = %s" 
-    cursor.execute(query, (publisher,))
-    results = cursor.fetchall()
-    if len(results) == 0:
-        return False
-    else:
-        return True
 
-#This function checks if an isbn exists in the database
-def checkISBN(isbn):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book where isbn = %s"
-    cursor.execute(query, (isbn,))
-    results = cursor.fetchall()
-    if len(results) == 0:
-        return False
-    else:
-        return True
-
-#This functions finds all the books with the given title
-def findByTitle(title):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book where title = %s"
-    cursor.execute(query, (title,))
-    results = cursor.fetchall()
-    #connection.close()
+def findByTitle(book_title):
+    results = collection.find({'title': book_title})
     return results
 
-#This function finds all the books with the given isbn
-def findByISBN(isbn):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book where isbn = %s"
-    cursor.execute(query, (isbn,))
-    results = cursor.fetchall()
-    connection.close()
+def findByPublisher(book_publisher):
+    results = collection.find({'published_by': book_publisher})
     return results
 
-#This function finds all the books with the given publisher
-def findByPublisher(publisher):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book where publisher = %s"
-    cursor.execute(query, (publisher,))
-    results = cursor.fetchall()
-    #connection.close()
+def findByPriceRange(min_price, max_price):
+    max_price = float(max_price)
+    min_price = float(min_price)
+    results = collection.find({'price': {'$gte': min_price, '$lte': max_price}})
     return results
 
-# This function finds all the books within the given price range
-def findByPriceRange(min, max):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book where price between %s and %s"
-    cursor.execute(query, (min, max))
-    results = cursor.fetchall()
-    #connection.close()
+def findByISBN(ISBN):
+    results = collection.find({'ISBN': ISBN})
     return results
 
-#This function finds all the books with the given year of publication
-def findByYear(year):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book where year = %s"
-    cursor.execute(query, (year,))
-    results = cursor.fetchall()
-    #connection.close()
+def findByTitleAndPublisher(book_title, book_publisher):
+    results = collection.find({'title': book_title, 'published_by': book_publisher})
     return results
 
-#This function finds all the books with the given Title AND publisher
-def findByTitleAndPublisher(title, publisher):
-    cursor = connection.cursor()
-    query = "select * from bookmanager.Book where title = %s and publisher = %s"
-    cursor.execute(query, (title, publisher))
-    results = cursor.fetchall()
-    #connection.close()
-    return results
-
-#This function updates a book. Given the isbn, it will update the title, publisher, year, previous_edition, and price
-def updateBook(title, isbn, publisher, year, previous_edition, price):
-    cursor = connection.cursor()
-
-    if previous_edition == "None":
-        query = "update bookmanager.Book set title = %s, publisher = %s, year = %s, previous_edition = %s, price = %s where isbn = %s"
-        cursor.execute(query, (title, publisher, year, None, price, isbn))
-    else:
-        query = "update bookmanager.Book set title = %s, publisher = %s, year = %s, previous_edition = %s, price = %s where isbn = %s"
-        cursor.execute(query, (title, publisher, year, previous_edition, price, isbn))
-
-    connection.commit()
-    
-
-#This function deletes a book from the database with the given isbn. It will also set all the previous_edition fields that referenced the isbn to None
-def deleteBook(isbn):
-    cursor = connection.cursor()
-    query = "delete from bookmanager.Book where isbn = %s"
-    cursor.execute(query, (isbn,))
-    connection.commit()
-    
-
-#This function adds a publisher to the database
 def addPublisher(name, phone, city):
-    cursor = connection.cursor()
-    query = "insert into bookmanager.Publisher values (%s, %s, %s)"
-    cursor.execute(query, (name, phone, city))
-    connection.commit()
-    #connection.close()
+    results = pub.insert_one({'name': name, 'phone': phone, 'city': city})
+    return results
 
-#This function adds a book to the database
-def addBook(isbn, title, publisher, year, previous_edition, price):
-    cursor = connection.cursor()
-    query = "insert into bookmanager.Book values (%s, %s, %s, %s, %s, %s)"
-    if previous_edition == "None":
-        cursor.execute(query, (isbn, title, year, publisher, None, price))
-    else:
-        cursor.execute(query, (isbn, title, year, publisher, previous_edition, price))
+def addBook(isbn, title, publisher, previous_edition, price):
+    if previous_edition == 'None':
+        previous_edition = None
+    price = float(price)
+    results = collection.insert_one({'ISBN': isbn, 'title': title, 'published_by': publisher, 'previous_edition': previous_edition, 'price': price})
+    return results
 
-    connection.commit()
-    
+def editBook(isbn, title, publisher, previous_edition, price):
+    if previous_edition == 'None':
+        previous_edition = None
+    price = float(price)
+    results = collection.update_one({'ISBN': isbn}, {'$set': {'title': title, 'publisher': publisher, 'previous_edition': previous_edition, 'price': price}})
 
-def closeConnection():
-    connection.close()
+    return results
 
+
+
+def deleteBook(ISBN):
+    results = collection.delete_one({'ISBN': ISBN})
+    return results
+
+def findPublisher(publisher):
+
+    results = pub.find({'name': publisher})
+    return results

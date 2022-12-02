@@ -1,6 +1,9 @@
 # book-management-sys
 ## This is a Python interactive menu for Book Management. 
 
+BUT NOW IT USES DOCKER MONGODB
+
+
 #### •	The system shall allow user to add a new publisher (name, phone and city).
 #### •	The system shall allow user to add a new book (ISBN, title, year, published_by, previous edition and price).
 #### •	The system shall allow user to edit an existing book.
