@@ -1,6 +1,9 @@
 # book-management-sys
 ## This is a Python interactive menu for Book Management. 
 
+Check the releases for the mongodb branch and the main branch which has mysql. 
+
+
 #### •	The system shall allow user to add a new publisher (name, phone and city).
 #### •	The system shall allow user to add a new book (ISBN, title, year, published_by, previous edition and price).
 #### •	The system shall allow user to edit an existing book.
